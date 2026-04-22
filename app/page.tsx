@@ -31,16 +31,16 @@ export default async function Home() {
   // Section IDs are the contract for ONLY_SECTIONS / HIDE_SECTIONS env toggles.
   // Keep IDs stable so deploy-time section filtering remains predictable.
   const sections = [
-  ["layout-hero", <LayoutHeroSection key="layout-hero" product="crm" />],
+  ["layout-hero", <LayoutHeroSection key="layout-hero" product={"crm"} />],
   ["layout-sponsors"],
-  ["layout-benefits", <LayoutBenefitsSection key="layout-benefits" context="crm" />],
-  ["layout-features", <LayoutFeatureGridSection key="layout-features" context="crm" />],
+  ["layout-benefits", <LayoutBenefitsSection key="layout-benefits" context={"crm"} />],
+  ["layout-features", <LayoutFeatureGridSection key="layout-features" context={"crm"} />],
   ["layout-services"],
   ["layout-testimonials"],
   ["layout-team"],
   ["layout-pricing"],
-  ["layout-contact", <LayoutContactSection key="layout-contact" context="crm" />],
-  ["layout-faq", <LayoutFaqSection key="layout-faq" context="crm" />],
+  ["layout-contact", <LayoutContactSection key="layout-contact" context={"crm"} />],
+  ["layout-faq", <LayoutFaqSection key="layout-faq" context={"crm"} />],
   ["layout-footer", <LayoutFooterSection key="layout-footer" />]] as
   const;
   const visibleSections = sections.
