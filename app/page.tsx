@@ -17,38 +17,38 @@ export default async function Home() {
   const session = await getAuthSession();
   // Simple toggles so agents/users can hide sections without touching JSX.
   // Use ONLY_SECTIONS (comma list) to whitelist, or HIDE_SECTIONS to blacklist.
-  const only = (process.env.ONLY_SECTIONS ?? "")
-    .split(",")
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
-  const envHide = (process.env.HIDE_SECTIONS ?? "")
-    .split(",")
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
+  const only = (process.env.ONLY_SECTIONS ?? "").
+  split(",").
+  map((s) => s.trim().toLowerCase()).
+  filter(Boolean);
+  const envHide = (process.env.HIDE_SECTIONS ?? "").
+  split(",").
+  map((s) => s.trim().toLowerCase()).
+  filter(Boolean);
   const defaultHide: string[] = [];
   const whitelist = only.length ? new Set(only) : null;
   const hide = new Set(whitelist ? envHide : [...defaultHide, ...envHide]);
   // Section IDs are the contract for ONLY_SECTIONS / HIDE_SECTIONS env toggles.
   // Keep IDs stable so deploy-time section filtering remains predictable.
   const sections = [
-    ["layout-hero", <LayoutHeroSection key="layout-hero" />],
-    ["layout-sponsors", <LayoutSponsorsSection key="layout-sponsors" />],
-    ["layout-benefits", <LayoutBenefitsSection key="layout-benefits" />],
-    ["layout-features", <LayoutFeatureGridSection key="layout-features" />],
-    ["layout-services", <LayoutServicesSection key="layout-services" />],
-    ["layout-testimonials", <LayoutTestimonialSection key="layout-testimonials" />],
-    ["layout-team", <LayoutTeamSection key="layout-team" />],
-    ["layout-pricing", <LayoutPricingSection key="layout-pricing" />],
-    ["layout-contact", <LayoutContactSection key="layout-contact" />],
-    ["layout-faq", <LayoutFaqSection key="layout-faq" />],
-    ["layout-footer", <LayoutFooterSection key="layout-footer" />],
-  ] as const;
-  const visibleSections = sections
-    .filter(([id]) => (whitelist ? whitelist.has(id) : true))
-    .filter(([id]) => !hide.has(id));
+  ["layout-hero", <LayoutHeroSection key="layout-hero" product="crm" />],
+  ["layout-sponsors"],
+  ["layout-benefits", <LayoutBenefitsSection key="layout-benefits" context="crm" />],
+  ["layout-features", <LayoutFeatureGridSection key="layout-features" context="crm" />],
+  ["layout-services"],
+  ["layout-testimonials"],
+  ["layout-team"],
+  ["layout-pricing"],
+  ["layout-contact", <LayoutContactSection key="layout-contact" context="crm" />],
+  ["layout-faq", <LayoutFaqSection key="layout-faq" context="crm" />],
+  ["layout-footer", <LayoutFooterSection key="layout-footer" />]] as
+  const;
+  const visibleSections = sections.
+  filter(([id]) => whitelist ? whitelist.has(id) : true).
+  filter(([id]) => !hide.has(id));
 
   return (
-    <div className="home-dark min-h-screen bg-gradient-to-b from-zinc-50 via-white to-[#ffe6d8] text-zinc-900 transition-colors dark:from-[#120d0b] dark:via-[#16100d] dark:to-[#1f1612] dark:text-[#f7efe8]">
+    <div className={"crm-home min-h-screen bg-gradient-to-b from-zinc-50 via-white to-[#e0f2ff] text-zinc-900 transition-colors dark:from-[#0a1828] dark:via-[#0e2340] dark:to-[#142c55] dark:text-[#dbe9ff]"}>
       <LayoutNavbar isLoggedIn={!!session} />
       <main className="flex min-h-screen w-full flex-col gap-12 px-6 py-12 sm:px-10 lg:px-16 lg:max-w-[1600px] lg:mx-auto">
         {visibleSections.map(([, node]) => node)}
@@ -96,6 +96,6 @@ export default async function Home() {
           box-shadow: 0 18px 44px -26px rgba(0, 0, 0, 0.75);
         }
       `}</style>
-    </div>
-  );
+    </div>);
+
 }
