@@ -54,9 +54,6 @@ function NavLink({
 
 
 
-
-
-
 }: {href: string;label: string;icon: React.ComponentType<{className?: string;}>;isActive: boolean;disabled?: boolean;}) {
   if (disabled) {
     return (
@@ -69,7 +66,7 @@ function NavLink({
 
   return (
     <Link
-      href={"/dashboard/customers"}
+      href={href}
       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
       isActive ?
       "bg-primary/10 text-primary font-medium" :
@@ -87,8 +84,6 @@ function NavSection({
   items,
   pathname,
   defaultOpen
-
-
 
 
 
