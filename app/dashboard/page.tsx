@@ -31,7 +31,7 @@ export default async function DashboardPage() {
 
   return (
     <Client
-      greeting={"Good to see you at your CRM Dashboard"}
+      greeting={"Welcome back, your modern CRM dashboard awaits"}
       firstName={"firstName"} />);
 
 
