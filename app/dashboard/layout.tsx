@@ -40,7 +40,6 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="flex min-h-screen">LiteStack
 
   {/* Desktop sidebar */}
         <aside className="hidden w-[264px] shrink-0 border-r bg-card/50 md:flex md:flex-col">
@@ -86,4 +85,3 @@ export default async function DashboardLayout({
       </div>
     </div>);
 
-}
