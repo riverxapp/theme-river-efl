@@ -22,10 +22,10 @@ export default async function AuthPage({ searchParams }: AuthPageProps) {
   const params = (await searchParams) ?? {};
   const redirectTo = typeof params.redirect === "string" ? params.redirect : "";
   const status =
-    params.status === "success" || params.status === "error"
-      ? params.status
-      : null;
+  params.status === "success" || params.status === "error" ?
+  params.status :
+  null;
   const message = typeof params.message === "string" ? params.message : null;
 
-  return <Client redirectTo={redirectTo} flashStatus={status} flashMessage={message} />;
+  return <Client redirectTo={redirectTo} flashStatus={status} flashMessage={message} crmBranding={"true"} landingHeadline={"Welcome to CRMPro: Empower Your Customer Relationships"} landingSubtext={"Manage contacts, track leads, and grow your business with ease."} ctaLabel={"Get Started"} />;
 }
