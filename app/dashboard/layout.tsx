@@ -42,46 +42,47 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-background">
       <div className="flex min-h-screen">LiteStack
 
+  {/* Desktop sidebar */}
+        <aside className="hidden w-[264px] shrink-0 border-r bg-card/50 md:flex md:flex-col">
+          <div className="p-5">
+            <div className="flex items-center gap-2.5">
+              <div className="grid size-8 place-items-center rounded-lg bg-foreground text-background text-sm font-bold shadow-sm">
+                P
+              </div>
+              {/* Dashboard Text Logo */}
+              <span className="font-semibold tracking-tight">Panda</span>
+            </div>
+          </div>
 
+          <div className="flex-1 overflow-y-auto px-3 py-4">
+            <SidebarNav />
+          </div>
+        </aside>
 
+        {/* Main content area */}
+        <div className="flex flex-1 flex-col">
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 sm:px-6">
+            <MobileNav
+              fullName={fullName}
+              email={user.email}
+              initials={initials}
+            />
 
+            <div className="ml-auto flex items-center gap-2">
+              <ThemeToggle />
+              <UserMenu
+                fullName={fullName}
+                email={user.email}
+                initials={initials}
+                signOutAction={signOutAction}
+              />
+            </div>
+          </header>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          <main className="flex-1 p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto max-w-6xl">{children}</div>
+          </main>
+        </div>
       </div>
     </div>);
 
