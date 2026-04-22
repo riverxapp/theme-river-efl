@@ -21,18 +21,18 @@ export default async function DashboardPage() {
   const session = await getAuthSession();
   if (!session) redirect("/auth#signin");
 
-  const [user] = await db
-    .select({ firstName: users.firstName })
-    .from(users)
-    .where(eq(users.id, session.userId))
-    .limit(1);
+  const [user] = await db.
+  select({ firstName: users.firstName }).
+  from(users).
+  where(eq(users.id, session.userId)).
+  limit(1);
 
   const firstName = user?.firstName || "there";
 
   return (
     <Client
-      greeting={getGreeting()}
-      firstName={firstName}
-    />
-  );
+      greeting={"Good to see you at your CRM Dashboard"}
+      firstName={"firstName"} />);
+
+
 }
