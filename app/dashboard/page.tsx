@@ -31,8 +31,8 @@ export default async function DashboardPage() {
 
   return (
     <Client
-      greeting={"Welcome back to LiteStack, your modern CRM dashboard awaits"}
-      firstName={"firstName"} />);
+      greeting={`Welcome back to LiteStack, your modern CRM dashboard awaits`}
+      firstName={firstName} />);
 
 
 }
