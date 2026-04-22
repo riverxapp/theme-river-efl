@@ -9,7 +9,8 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 
 export const metadata: Metadata = {
   title: "Panda - SaaS App Builder Starter",
-  description: "Production-ready SaaS app builder starter template with modern UI, dark mode, and launch-ready sections.",
+  description:
+    "Production-ready SaaS app builder starter template with modern UI, dark mode, and launch-ready sections.",
 };
 
 export default function RootLayout({
@@ -47,7 +48,12 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <ErrorReporter />
           {children}
         </ThemeProvider>
