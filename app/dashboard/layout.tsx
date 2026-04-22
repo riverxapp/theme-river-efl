@@ -39,8 +39,6 @@ export default async function DashboardLayout({
   `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`.toUpperCase() || "U";
 
   return (
-    <div className="min-h-screen bg-background">
-
   {/* Desktop sidebar */}
         <aside className="hidden w-[264px] shrink-0 border-r bg-card/50 md:flex md:flex-col">
           <div className="p-5">
@@ -83,3 +81,4 @@ export default async function DashboardLayout({
           </main>
         </div>
       </div>
+)
