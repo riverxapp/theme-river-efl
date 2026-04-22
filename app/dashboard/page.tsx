@@ -31,7 +31,7 @@ export default async function DashboardPage() {
 
   return (
     <Client
-      greeting={"Welcome back to LiteStack, your modern CRM dashboard awaits your leads, accounts, contacts, activity, pipelines, and follow-ups."}
+      greeting={"Good morning, good afternoon, or good evening! Welcome back to LiteStack - your modern CRM dashboard with key metrics, segmented customer statuses, and all your leads, accounts, and activities."}
       firstName={firstName} />);
 
 
