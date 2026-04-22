@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Clock,
   Mail,
@@ -17,6 +16,7 @@ import {
   updateMemberRoleAction,
   updateTeamNameAction,
 } from "@/app/dashboard/team/actions";
+
 import { InviteLogger } from "@/components/dashboard/invite-logger";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +31,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+
+import { useEffect, useState } from "react";
 
 // Purpose: Client UI for /dashboard/team.
 // Use this file for interactive team management and browser-only UI logic.
@@ -70,6 +72,19 @@ const roleBadgeClasses: Record<string, string> = {
     "bg-muted text-muted-foreground border-border",
 };
 
+type Customer = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  status: "Lead" | "Active" | "Inactive";
+  notes: string;
+};
+
+function generateId() {
+  return Math.random().toString(36).substring(2, 10);
+}
+
 export default function Client({
   currentUserId,
   membership,
@@ -80,6 +95,105 @@ export default function Client({
   message,
   inviteUrl,
 }: ClientProps) {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    status: "Lead" as Customer["status"],
+    notes: "",
+  });
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const canManage = membership?.role === "owner" || membership?.role === "admin";
+  const isOwner = membership?.role === "owner";
+
+  // Load customers from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("dashboard_customers");
+    if (stored) {
+      try {
+        setCustomers(JSON.parse(stored));
+      } catch {}
+    }
+  }, []);
+
+  // Sync customers to localStorage
+  useEffect(() => {
+    localStorage.setItem("dashboard_customers", JSON.stringify(customers));
+  }, [customers]);
+
+  function resetForm() {
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      status: "Lead",
+      notes: "",
+    });
+    setEditingCustomer(null);
+    setFormError(null);
+  }
+
+  function onEdit(customer: Customer) {
+    setEditingCustomer(customer);
+    setFormData({
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone || "",
+      status: customer.status,
+      notes: customer.notes,
+    });
+    setFormError(null);
+  }
+
+  function onDelete(customerId: string) {
+    if (confirm("Are you sure you want to delete this customer?")) {
+      setCustomers((cs) => cs.filter((c) => c.id !== customerId));
+      if (editingCustomer?.id === customerId) resetForm();
+    }
+  }
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim()) {
+      setFormError("Name and Email are required.");
+      return;
+    }
+    if (editingCustomer) {
+      // update existing
+      setCustomers((cs) =>
+        cs.map((c) =>
+          c.id === editingCustomer.id
+            ? {
+                ...c,
+                name: formData.name.trim(),
+                email: formData.email.trim(),
+                phone: formData.phone.trim(),
+                status: formData.status,
+                notes: formData.notes,
+              }
+            : c,
+        ),
+      );
+    } else {
+      // create new
+      setCustomers((cs) => [
+        ...cs,
+        {
+          id: generateId(),
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          status: formData.status,
+          notes: formData.notes,
+        },
+      ]);
+    }
+    resetForm();
+  }
+
   if (!membership) {
     return (
       <>
@@ -103,9 +217,6 @@ export default function Client({
       </>
     );
   }
-
-  const canManage = membership.role === "owner" || membership.role === "admin";
-  const isOwner = membership.role === "owner";
 
   return (
     <>
@@ -162,6 +273,159 @@ export default function Client({
               </CardContent>
             </Card>
           ) : null}
+
+          {/* Customers CRM section */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <UsersRound className="size-4 text-muted-foreground" />
+                  <CardTitle className="text-base">Customers</CardTitle>
+                </div>
+                <Badge variant="secondary" className="text-xs">
+                  {customers.length} customer{customers.length !== 1 ? "s" : ""}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="divide-y mb-4 max-h-96 overflow-y-auto">
+                {customers.length === 0 ? (
+                  <p className="py-4 text-center text-sm text-muted-foreground">
+                    No customers added yet.
+                  </p>
+                ) : (
+                  customers.map((customer) => (
+                    <div
+                      key={customer.id}
+                      className="flex justify-between items-center py-2 first:pt-0 last:pb-0"
+                    >
+                      <div>
+                        <p className="font-medium text-sm">{customer.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {customer.email}
+                          {customer.phone ? ` • ${customer.phone}` : ""}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Status: <span className="capitalize">{customer.status}</span>
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEdit(customer)}
+                          title="Edit customer"
+                        >
+                          <Pencil className="size-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onDelete(customer.id)}
+                          title="Delete customer"
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <UserMinus className="size-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              <Separator />
+              <form onSubmit={onSubmit} className="space-y-4 mt-4">
+                <div className="grid grid-cols-1 gap-3">
+                  <div>
+                    <Label htmlFor="customerName">Name</Label>
+                    <Input
+                      id="customerName"
+                      name="name"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData((f) => ({ ...f, name: e.target.value }))
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="customerEmail">Email</Label>
+                    <Input
+                      id="customerEmail"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData((f) => ({ ...f, email: e.target.value }))
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="customerPhone">Phone</Label>
+                    <Input
+                      id="customerPhone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData((f) => ({ ...f, phone: e.target.value }))
+                      }
+                      placeholder="Optional"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="customerStatus">Status</Label>
+                    <select
+                      id="customerStatus"
+                      name="status"
+                      value={formData.status}
+                      onChange={(e) =>
+                        setFormData((f) => ({
+                          ...f,
+                          status: e.target.value as Customer["status"],
+                        }))
+                      }
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="Lead">Lead</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="customerNotes">Notes</Label>
+                    <textarea
+                      id="customerNotes"
+                      name="notes"
+                      rows={3}
+                      value={formData.notes}
+                      onChange={(e) =>
+                        setFormData((f) => ({ ...f, notes: e.target.value }))
+                      }
+                      className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Optional notes about this customer"
+                    />
+                  </div>
+                </div>
+                {formError ? (
+                  <p className="text-xs text-destructive">{formError}</p>
+                ) : null}
+                <Button type="submit" className="w-full">
+                  {editingCustomer ? "Update Customer" : "Add Customer"}
+                </Button>
+                {editingCustomer ? (
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={resetForm}
+                    type="button"
+                  >
+                    Cancel
+                  </Button>
+                ) : null}
+              </form>
+            </CardContent>
+          </Card>
 
           {/* Members list */}
           <Card>
